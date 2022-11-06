@@ -2,10 +2,10 @@
 
 set -e
 
-DEBUG_ADDRESS="debug@${MAILNAME}"
-DEBUG_PASS="debug"
+CATCHALL_ADDRESS="catchall@${MAIL_DOMAIN}"
+CATCHALL_PASSWORD="catchall"
 MAIL_LOCATION='/var/mail'
-POSTMASTER_ADDRESS="postmaster@${MAILNAME}"
+POSTMASTER_ADDRESS="postmaster@${MAIL_DOMAIN}"
 HOSTNAME="$(hostname -f)"
 
 _add_line() {
@@ -76,17 +76,27 @@ _account_add() {
     /usr/sbin/postmap /etc/postfix/vmailbox
 }
 
+_add_user_if_set() {
+    if [ -n "$1" ]; then
+        local mailaddress="$1@${MAIL_DOMAIN}"
+        echo "Creating account for $mailaddress"
+        local mailpassword="$2"
+        _account_add $mailaddress $mailpassword
+        _add_line "$mailaddress" "/$mailaddress/ $mailaddress" /etc/postfix/virtual_regexp
+    fi
+}
+
 trap "_stop" SIGINT SIGTERM SIGHUP
 
 _log "Docker entrypoint start"
 
 # Configuring Postfix
 
-if [ -n "$MAILNAME" ]; then
-    echo $MAILNAME > /etc/mailname;
-    /usr/sbin/postconf -e mydomain=$MAILNAME
-    if ! grep -q "$MAILNAME" /etc/postfix/vhost; then
-        echo "$MAILNAME" >> /etc/postfix/vhost
+if [ -n "$MAIL_DOMAIN" ]; then
+    echo $MAIL_DOMAIN > /etc/mailname;
+    /usr/sbin/postconf -e mydomain=$MAIL_DOMAIN
+    if ! grep -q "$MAIL_DOMAIN" /etc/postfix/vhost; then
+        echo "$MAIL_DOMAIN" >> /etc/postfix/vhost
     fi
     /usr/sbin/postconf -e smtp_helo_name=\$myhostname.\$mydomain
 fi
@@ -111,17 +121,21 @@ fi
 /usr/sbin/postconf -e virtual_mailbox_maps=hash:/etc/postfix/vmailbox
 /usr/sbin/postconf compatibility_level=2
 
-# Create user account
-if [ -n "$MAIL_ADDRESS" ]; then
-    _account_add "$MAIL_ADDRESS" "$MAIL_PASS"
-    _add_line "$MAIL_ADDRESS" "/$MAIL_ADDRESS/ $MAIL_ADDRESS" /etc/postfix/virtual_regexp
-fi
+# Create user accounts
+_add_user_if_set "$MAIL_USER_1" "$MAIL_PASSWORD_1"
+_add_user_if_set "$MAIL_USER_2" "$MAIL_PASSWORD_2"
+_add_user_if_set "$MAIL_USER_3" "$MAIL_PASSWORD_3"
+_add_user_if_set "$MAIL_USER_4" "$MAIL_PASSWORD_4"
+_add_user_if_set "$MAIL_USER_5" "$MAIL_PASSWORD_5"
+_add_user_if_set "$MAIL_USER_6" "$MAIL_PASSWORD_6"
+_add_user_if_set "$MAIL_USER_7" "$MAIL_PASSWORD_7"
+_add_user_if_set "$MAIL_USER_8" "$MAIL_PASSWORD_8"
+_add_user_if_set "$MAIL_USER_9" "$MAIL_PASSWORD_9"
 
-# Create debug account
-_account_add "$DEBUG_ADDRESS" "$DEBUG_PASS"
-
-# Force to send all emails to debug email address, no email to outside
-_add_line "$DEBUG_ADDRESS" "/.+@.+/ $DEBUG_ADDRESS" /etc/postfix/virtual_regexp
+# Create catchall account
+_account_add "$CATCHALL_ADDRESS" "$CATCHALL_PASSWORD"
+# Force to send all emails to catchall email address, no email to outside
+_add_line "$CATCHALL_ADDRESS" "/.+@.+/ $CATCHALL_ADDRESS" /etc/postfix/virtual_regexp
 
 /usr/sbin/postmap /etc/postfix/virtual_regexp
 /usr/sbin/postmap /etc/postfix/virtual

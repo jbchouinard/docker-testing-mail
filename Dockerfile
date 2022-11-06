@@ -1,17 +1,33 @@
 FROM ubuntu:16.04
 
-MAINTAINER antespi@gmail.com
+MAINTAINER me@jbchouinard.net
 
-ENV MAILNAME=localdomain.test \
-    MAIL_ADDRESS= \
-    MAIL_PASS= \
+ENV MAIL_DOMAIN=local.test \
     MAIL_FS_USER=docker \
-    MAIL_FS_HOME=/home/docker
+    MAIL_FS_HOME=/home/docker \
+    MAIL_USER_1= \
+    MAIL_PASSWORD_1= \
+    MAIL_USER_2= \
+    MAIL_PASSWORD_2= \
+    MAIL_USER_3= \
+    MAIL_PASSWORD_3= \
+    MAIL_USER_4= \
+    MAIL_PASSWORD_4= \
+    MAIL_USER_5= \
+    MAIL_PASSWORD_5= \
+    MAIL_USER_6= \
+    MAIL_PASSWORD_6= \
+    MAIL_USER_7= \
+    MAIL_PASSWORD_7= \
+    MAIL_USER_8= \
+    MAIL_PASSWORD_8= \
+    MAIL_USER_9= \
+    MAIL_PASSWORD_9=
 
 RUN set -x; \
     apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
-    && echo "postfix postfix/mailname string $MAILNAME" | debconf-set-selections \
+    && echo "postfix postfix/mailname string $MAIL_DOMAIN" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         postfix \

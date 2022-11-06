@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  local-test-mail:
+    build: .
+    ports:
+    - "25:25"
+    - "143:143"
+    - "993:993"
+    environment:
+    - MAIL_DOMAIN=local.test
+    - MAIL_USER_1=alice
+    - MAIL_PASSWORD_1=password123
+    - MAIL_USER_2=bob
+    - MAIL_PASSWORD_2=password123
