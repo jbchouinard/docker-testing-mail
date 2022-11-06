@@ -1,6 +1,6 @@
-# Dockerized IMAP server#
+# Dockerized IMAP/SMTP Test Server
 
-IMAP server for debugging.
+Mail server for debugging.
 
 **IMPORTANT**: This image is **ONLY** for developing/debugging proposes
 
@@ -10,11 +10,14 @@ https://hub.docker.com/r/tvial/docker-mailserver/
 
 This image is even simpler than `tvial` docker image. Includes only 
 Postfix (SMTP) and Dovecot (IMAP) servers with one catchall mailbox 
-`debug@example.org` for all emails. So, it's very useful for debugging. Optionally, you can define another normal mailbox.
+`debug@example.org` for all emails.
+So, it's very useful for debugging. Optionally, you can define another normal mailbox.
 
-Every email received via SMTP will be delivered locally to `debug@example.org`, so it's safe for testing a web application sending emails with a production list of emails.
+Every email received via SMTP will be delivered locally to `debug@example.org`, so it's safe for
+testing a web application sending emails with a production list of emails.
 
-Using your favorite email client you can connect via IMAP protocol to see emails like original recipient would received them
+Using your favorite email client you can connect via IMAP protocol to see emails
+like original recipient would received them
 
 
 ## Run container with docker compose
